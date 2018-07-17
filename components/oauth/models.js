@@ -244,8 +244,8 @@ function getRefreshToken(refreshToken) {
     });
 }
 
-function validateScope(token, client) {
-  return (user.scope === scope && client.scope === scope && scope !== null) ? scope : false
+function validateScope(token, client, scope) {
+  return (token.scope === scope && client.scope === scope && scope !== null) ? scope : false
 }
 
 function verifyScope(token, scope) {
