@@ -1,14 +1,13 @@
 /**
  * Created by Manjesh on 14-05-2016.
  */
-
-var _ = require('lodash');
-var sqldb = require('./sqldb');
-var User = sqldb.User;
-var OAuthClient = sqldb.OAuthClient;
-var OAuthAccessToken = sqldb.OAuthAccessToken;
-var OAuthAuthorizationCode = sqldb.OAuthAuthorizationCode;
-var OAuthRefreshToken = sqldb.OAuthRefreshToken;
+const _ = require('lodash');
+const sqldb = require('./sqldb');
+const User = sqldb.User;
+const OAuthClient = sqldb.OAuthClient;
+const OAuthAccessToken = sqldb.OAuthAccessToken;
+const OAuthAuthorizationCode = sqldb.OAuthAuthorizationCode;
+const OAuthRefreshToken = sqldb.OAuthRefreshToken;
 
 function getAccessToken(bearerToken) {
   return OAuthAccessToken
@@ -24,7 +23,7 @@ function getAccessToken(bearerToken) {
     })
     .then(function (accessToken) {
       if (!accessToken) return false;
-      var token = accessToken.toJSON();
+      const token = accessToken.toJSON();
       token.user = token.User;
       token.client = token.OAuthClient;
 
@@ -32,7 +31,7 @@ function getAccessToken(bearerToken) {
       // token.scope = token.scope
       return token;
     })
-    .catch(function (err) {
+    .catch(function (/*err*/) {
       console.log("getAccessToken - Err: ")
     });
 }
@@ -48,19 +47,18 @@ function getClient(clientId, clientSecret) {
     .findOne(options)
     .then(function (client) {
       if (!client) return new Error("client not found");
-      var clientWithGrants = client.toJSON()
-      clientWithGrants.grants = ['authorization_code', 'password', 'refresh_token', 'client_credentials']
+        const clientWithGrants = client.toJSON();
+        clientWithGrants.grants = ['authorization_code', 'password', 'refresh_token', 'client_credentials'];
       // Todo: need to create another table for redirect URIs
-      clientWithGrants.redirectUris = [clientWithGrants.redirect_uri]
-      delete clientWithGrants.redirect_uri
-      //clientWithGrants.refreshTokenLifetime = integer optional
-      //clientWithGrants.accessTokenLifetime  = integer optional
+      clientWithGrants.redirectUris = [clientWithGrants.redirect_uri];
+      delete clientWithGrants.redirect_uri;
+      // clientWithGrants.refreshTokenLifetime = integer optional
+      // clientWithGrants.accessTokenLifetime  = integer optional
       return clientWithGrants
     }).catch(function (err) {
-      console.log("getClient - Err: ", err)
+      console.log("getClient - Err: ", err);
     });
 }
-
 
 function getUser(username, password) {
   return User
@@ -86,16 +84,16 @@ function revokeAuthorizationCode(code) {
     where: {
       authorization_code: code.code
     }
-  }).then(function (rCode) {
+  }).then(function (/*rCode*/) {
     //if(rCode) rCode.destroy();
-    /***
-     * As per the discussion we need set older date
-     * revokeToken will expected return a boolean in future version
-     * https://github.com/oauthjs/node-oauth2-server/pull/274
-     * https://github.com/oauthjs/node-oauth2-server/issues/290
-     */
-    var expiredCode = code
-    expiredCode.expiresAt = new Date('2015-05-28T06:59:53.000Z')
+      /***
+       * As per the discussion we need set older date
+       * revokeToken will expected return a boolean in future version
+       * https://github.com/oauthjs/node-oauth2-server/pull/274
+       * https://github.com/oauthjs/node-oauth2-server/issues/290
+       */
+      const expiredCode = code;
+      expiredCode.expiresAt = new Date('2015-05-28T06:59:53.000Z');
     return expiredCode
   }).catch(function (err) {
     console.log("getUser - Err: ", err)
@@ -109,14 +107,14 @@ function revokeToken(token) {
     }
   }).then(function (rT) {
     if (rT) rT.destroy();
-    /***
-     * As per the discussion we need set older date
-     * revokeToken will expected return a boolean in future version
-     * https://github.com/oauthjs/node-oauth2-server/pull/274
-     * https://github.com/oauthjs/node-oauth2-server/issues/290
-     */
-    var expiredToken = token
-    expiredToken.refreshTokenExpiresAt = new Date('2015-05-28T06:59:53.000Z')
+      /***
+       * As per the discussion we need set older date
+       * revokeToken will expected return a boolean in future version
+       * https://github.com/oauthjs/node-oauth2-server/pull/274
+       * https://github.com/oauthjs/node-oauth2-server/issues/290
+       */
+      const expiredToken = token;
+      expiredToken.refreshTokenExpiresAt = new Date('2015-05-28T06:59:53.000Z');
     return expiredToken
   }).catch(function (err) {
     console.log("revokeToken - Err: ", err)
@@ -142,7 +140,7 @@ function saveToken(token, client, user) {
       }) : [],
 
     ])
-    .then(function (resultsArray) {
+    .then(function (/*resultsArray*/) {
       return _.assign(  // expected to return client and user, but not returning
         {
           client: client,
@@ -167,16 +165,16 @@ function getAuthorizationCode(code) {
     })
     .then(function (authCodeModel) {
       if (!authCodeModel) return false;
-      var client = authCodeModel.OAuthClient.toJSON()
-      var user = authCodeModel.User.toJSON()
-      return reCode = {
-        code: code,
-        client: client,
-        expiresAt: authCodeModel.expires,
-        redirectUri: client.redirect_uri,
-        user: user,
-        scope: authCodeModel.scope,
-      };
+        const client = authCodeModel.OAuthClient.toJSON();
+        const user = authCodeModel.User.toJSON();
+        return {
+            code: code,
+            client: client,
+            expiresAt: authCodeModel.expires,
+            redirectUri: client.redirect_uri,
+            user: user,
+            scope: authCodeModel.scope,
+        };
     }).catch(function (err) {
       console.log("getAuthorizationCode - Err: ", err)
     });
@@ -192,7 +190,7 @@ function saveAuthorizationCode(code, client, user) {
       scope: code.scope
     })
     .then(function () {
-      code.code = code.authorizationCode
+      code.code = code.authorizationCode;
       return code
     }).catch(function (err) {
       console.log("saveAuthorizationCode - Err: ", err)
@@ -200,12 +198,12 @@ function saveAuthorizationCode(code, client, user) {
 }
 
 function getUserFromClient(client) {
-  var options = {
-    where: {client_id: client.client_id},
-    include: [User],
-    attributes: ['id', 'client_id', 'redirect_uri'],
-  };
-  if (client.client_secret) options.where.client_secret = client.client_secret;
+    const options = {
+        where: {client_id: client.client_id},
+        include: [User],
+        attributes: ['id', 'client_id', 'redirect_uri'],
+    };
+    if (client.client_secret) options.where.client_secret = client.client_secret;
 
   return OAuthClient
     .findOne(options)
@@ -219,7 +217,7 @@ function getUserFromClient(client) {
 }
 
 function getRefreshToken(refreshToken) {
-  if (!refreshToken || refreshToken === 'undefined') return false
+  if (!refreshToken || refreshToken === 'undefined') return false;
 
   return OAuthRefreshToken
     .findOne({
@@ -229,15 +227,14 @@ function getRefreshToken(refreshToken) {
 
     })
     .then(function (savedRT) {
-      var tokenTemp = {
-        user: savedRT ? savedRT.User.toJSON() : {},
-        client: savedRT ? savedRT.OAuthClient.toJSON() : {},
-        refreshTokenExpiresAt: savedRT ? new Date(savedRT.expires) : null,
-        refreshToken: refreshToken,
-        refresh_token: refreshToken,
-        scope: savedRT.scope
-      };
-      return tokenTemp;
+        return {
+            user: savedRT ? savedRT.User.toJSON() : {},
+            client: savedRT ? savedRT.OAuthClient.toJSON() : {},
+            refreshTokenExpiresAt: savedRT ? new Date(savedRT.expires) : null,
+            refreshToken: refreshToken,
+            refresh_token: refreshToken,
+            scope: savedRT.scope
+        };
 
     }).catch(function (err) {
       console.log("getRefreshToken - Err: ", err)
@@ -245,7 +242,7 @@ function getRefreshToken(refreshToken) {
 }
 
 function validateScope(token, client, scope) {
-  return (token.scope === scope && client.scope === scope && scope !== null) ? scope : false
+  return (token.scope === scope && client.scope === scope && scope !== null) ? scope : false;
 }
 
 function verifyScope(token, scope) {
@@ -269,5 +266,5 @@ module.exports = {
   saveAuthorizationCode: saveAuthorizationCode, //renamed saveOAuthAuthorizationCode,
   validateScope: validateScope,
   verifyScope: verifyScope,
-}
+};
 
