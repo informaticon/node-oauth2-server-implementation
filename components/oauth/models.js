@@ -69,7 +69,12 @@ function getUser(username, password) {
       attributes: ['id', 'username', 'password', 'scope'],
     })
     .then(function (user) {
-      return user.password == password ? user.toJSON() : false;
+      // todo: replace by password hash & salt
+      if (user.password !== password) return false;
+
+      // Remove password from object before sending back to caller
+      user.password = undefined;
+      return  user.toJSON();
     })
     .catch(function (err) {
       console.log("getUser - Err: ", err)
