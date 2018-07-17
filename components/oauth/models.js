@@ -27,7 +27,9 @@ function getAccessToken(bearerToken) {
       var token = accessToken.toJSON();
       token.user = token.User;
       token.client = token.OAuthClient;
-      token.scope = token.scope
+
+        // Can't be useful (commented by harps)
+      // token.scope = token.scope
       return token;
     })
     .catch(function (err) {
