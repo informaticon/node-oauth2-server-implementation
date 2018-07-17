@@ -1,32 +1,31 @@
 /**
  * Created by Manjesh on 14-05-2016.
  */
-
-var oauthServer = require('oauth2-server');
-var Request = oauthServer.Request;
-var Response = oauthServer.Response;
-var db = require('./sqldb')
-var config = require('../../config');
+const oauthServer = require('oauth2-server');
+const Request = oauthServer.Request;
+const Response = oauthServer.Response;
+let db = require('./sqldb');
+const config = require('../../config');
 if(config.db === 'mongo'){
   db = require('./mongodb')
 }
-var oauth = require('./oauth')
+const oauth = require('./oauth');
 
-module.exports = function(options){
-  var options = options || {};
-  return function(req, res, next) {
-    var request = new Request({
-      headers: {authorization: req.headers.authorization},
-      method: req.method,
-      query: req.query,
-      body: req.body
-    });
-    var response = new Response(res);
+module.exports = function(opt){
+    const options = opt || {};
+    return function(req, res, next) {
+        const request = new Request({
+            headers: {authorization: req.headers.authorization},
+            method: req.method,
+            query: req.query,
+            body: req.body
+        });
+        const response = new Response(res);
 
-    oauth.authenticate(request, response,options)
+        oauth.authenticate(request, response,options)
       .then(function (token) {
         // Request is authorized.
-        req.user = token
+        req.user = token;
         next()
       })
       .catch(function (err) {
@@ -34,4 +33,4 @@ module.exports = function(options){
         res.status(err.code || 500).json(err)
       });
   }
-}
+};
