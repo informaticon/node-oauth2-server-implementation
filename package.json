@@ -3,8 +3,18 @@
   "version": "0.0.0",
   "private": true,
   "contributors": [
-    { "name": "Manjesh V", "email": "manjeshpv@gmail.com" },
-    { "name": "Yogesh", "email": "yogesum@gmail.com" }
+    {
+      "name": "Manjesh V",
+      "email": "manjeshpv@gmail.com"
+    },
+    {
+      "name": "Yogesh",
+      "email": "yogesum@gmail.com"
+    },
+    {
+      "name": "Harps",
+      "email": "eric@harps.ch"
+    }
   ],
   "main": "index.js",
   "dependencies": {
@@ -13,6 +23,7 @@
     "debug": "~2.2.0",
     "express": "~4.13.1",
     "jade": "~1.11.0",
+    "jsonwebtoken": "^8.3.0",
     "lodash": "^4.15.0",
     "lodash-cli": "^4.15.0",
     "mongoose": "^4.4.17",
@@ -30,10 +41,11 @@
   },
   "scripts": {
     "test": "./node_modules/.bin/mocha 'test/**/*_test.js'",
-    "start": "node ./bin/www"
+    "start": "node ./bin/www port 1212"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/manjeshpv/node-oauth2-server-implementation.git"
-  }
+  },
+  "PORT": 1212
 }
